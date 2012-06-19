@@ -8,8 +8,7 @@ import org.json.JSONObject;
 public class Message {
     public String date;
     public long uid;
-    //TODO make long
-    public String mid;
+    public long mid;
     public String title;
     public String body;
     //TODO make boolean
@@ -33,7 +32,7 @@ public class Message {
             m.uid = o.getLong("uid");
             m.is_out = o.getInt("out")==1;
         }
-        m.mid = o.getString("mid");
+        m.mid = o.getLong("mid");
         m.date = o.getString("date");
         if(!from_history && !from_chat)
             m.title = Api.unescape(o.getString("title"));
@@ -62,7 +61,7 @@ public class Message {
 
     public static Message parse(JSONArray a) throws JSONException {
         Message m = new Message();
-        m.mid = a.getString(1);
+        m.mid = a.getLong(1);
         m.uid = a.getLong(3);
         m.date = a.getString(4);
         m.title = Api.unescape(a.getString(5));
