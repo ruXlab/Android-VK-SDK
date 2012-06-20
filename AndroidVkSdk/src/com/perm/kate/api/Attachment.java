@@ -71,4 +71,19 @@ public class Attachment implements Serializable {
         }
         return attachments_arr;
     }
+
+	public static ArrayList<Attachment> parseAttachments(String attachmentsJSON, long from_id,
+			long copy_owner_id, String geoJSON) throws JSONException {
+		JSONArray a = null;
+		try {
+			 a = new JSONArray(attachmentsJSON);
+		} catch (JSONException e) {	}
+		
+		JSONObject g = null;
+		try {
+			g = new JSONObject(geoJSON);
+		} catch (JSONException e) {	}
+		
+		return parseAttachments(a, from_id, copy_owner_id, g);
+	}
 }
