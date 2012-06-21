@@ -168,4 +168,11 @@ public class Message {
 	public void setChatId(Long chat_id) {
 		this.chat_id = chat_id;
 	}
+	
+	/**
+	 * Check if this message is a group message
+	 */
+	public boolean isChat() {
+		return chat_id != null && chat_id != 0;
+	}
 }
