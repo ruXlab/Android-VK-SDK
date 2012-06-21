@@ -49,7 +49,7 @@ public class Api {
     }
     
     private final static int MAX_TRIES=3;
-    private JSONObject sendRequest(Params params) throws IOException, MalformedURLException, JSONException, KException {
+    protected JSONObject sendRequest(Params params) throws IOException, MalformedURLException, JSONException, KException {
         String url = getSignedUrl(params);
         Log.i(TAG, "url="+url);
         String response="";
@@ -147,8 +147,8 @@ public class Api {
         }
         return cities;
     }
-
-    <T> String arrayToString(Collection<T> items) {
+ 
+    protected <T> String arrayToString(Collection<T> items) {
         if(items==null)
             return null;
         String str_cids = "";
