@@ -45,6 +45,7 @@ public class User implements Serializable {
     public int friends_count;
     public int user_photos_count;
     public int user_videos_count;
+    public boolean is_friend = false;
     //public int followers_count;
     //public int subscriptions_count;
     //public int online_friends_count;
