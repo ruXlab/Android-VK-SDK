@@ -605,7 +605,7 @@ public class Api {
 
     //http://vkontakte.ru/developers.php?o=-1&p=messages.markAsNew
     //http://vkontakte.ru/developers.php?o=-1&p=messages.markAsRead
-    public String markAsNewOrAsRead(ArrayList<Long> mids, boolean as_read) throws MalformedURLException, IOException, JSONException, KException{
+    public String markAsNewOrAsRead(Collection<Long> mids, boolean as_read) throws MalformedURLException, IOException, JSONException, KException{
         if (mids == null || mids.size() == 0)
             return null;
         Params params;
