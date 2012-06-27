@@ -524,7 +524,7 @@ public class Api {
     /*** methods for messages 
      * @throws KException ***/
     //http://vkontakte.ru/developers.php?o=-1&p=messages.get
-    public Collection<Message> getMessages(long time_offset, boolean is_out, int count) throws MalformedURLException, IOException, JSONException, KException{
+    public ArrayList<Message> getMessages(long time_offset, boolean is_out, int count) throws MalformedURLException, IOException, JSONException, KException{
         Params params = new Params("messages.get");
         if (is_out)
             params.put("out","1");
@@ -539,7 +539,7 @@ public class Api {
     }
     
     //http://vkontakte.ru/developers.php?o=-1&p=messages.getHistory
-    public Collection<Message> getMessagesHistory(long uid, long chat_id, long me, Long offset, int count) throws MalformedURLException, IOException, JSONException, KException{
+    public ArrayList<Message> getMessagesHistory(long uid, long chat_id, long me, Long offset, int count) throws MalformedURLException, IOException, JSONException, KException{
         Params params = new Params("messages.getHistory");
         if(chat_id<=0)
             params.put("uid",uid);
