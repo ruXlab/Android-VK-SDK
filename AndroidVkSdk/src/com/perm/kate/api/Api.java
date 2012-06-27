@@ -554,7 +554,7 @@ public class Api {
     }
     
     //http://vkontakte.ru/developers.php?o=-1&p=messages.getDialogs
-    public Collection<Message> getMessagesDialogs(long time_offset, int count) throws MalformedURLException, IOException, JSONException, KException{
+    public ArrayList<Message> getMessagesDialogs(long time_offset, int count) throws MalformedURLException, IOException, JSONException, KException{
         Params params = new Params("messages.getDialogs");
         if (time_offset!=0)
             params.put("time_offset", time_offset);
@@ -566,7 +566,7 @@ public class Api {
         return parseMessages(array, false, 0, false ,0);
     }
 
-    private Collection<Message> parseMessages(JSONArray array, boolean from_history, long history_uid, boolean from_chat, long me) throws JSONException {
+    private ArrayList<Message> parseMessages(JSONArray array, boolean from_history, long history_uid, boolean from_chat, long me) throws JSONException {
         ArrayList<Message> messages = new ArrayList<Message>();
         if (array != null) {
             int category_count = array.length();
