@@ -206,7 +206,7 @@ public class Api {
     public ArrayList<User> getFriends(Long user_id, String fields, Integer lid) throws MalformedURLException, IOException, JSONException, KException{
         Params params = new Params("friends.get");
         if(fields==null)
-            fields="first_name,last_name,photo_medium,online";
+            fields="first_name,last_name,nickname,photo_medium,photo,online,sex";
         params.put("fields",fields);
         params.put("uid",user_id);
         params.put("lid", lid);
