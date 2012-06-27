@@ -524,7 +524,7 @@ public class Api {
     /*** methods for messages 
      * @throws KException ***/
     //http://vkontakte.ru/developers.php?o=-1&p=messages.get
-    public ArrayList<Message> getMessages(long time_offset, boolean is_out, int count) throws MalformedURLException, IOException, JSONException, KException{
+    public Collection<Message> getMessages(long time_offset, boolean is_out, int count) throws MalformedURLException, IOException, JSONException, KException{
         Params params = new Params("messages.get");
         if (is_out)
             params.put("out","1");
@@ -535,12 +535,11 @@ public class Api {
         params.put("preview_length","0");
         JSONObject root = sendRequest(params);
         JSONArray array = root.optJSONArray("response");
-        ArrayList<Message> messages = parseMessages(array, false, 0, false, 0);
-        return messages;
+        return parseMessages(array, false, 0, false, 0);
     }
     
     //http://vkontakte.ru/developers.php?o=-1&p=messages.getHistory
-    public ArrayList<Message> getMessagesHistory(long uid, long chat_id, long me, Long offset, int count) throws MalformedURLException, IOException, JSONException, KException{
+    public Collection<Message> getMessagesHistory(long uid, long chat_id, long me, Long offset, int count) throws MalformedURLException, IOException, JSONException, KException{
         Params params = new Params("messages.getHistory");
         if(chat_id<=0)
             params.put("uid",uid);
@@ -551,12 +550,11 @@ public class Api {
             params.put("count", count);
         JSONObject root = sendRequest(params);
         JSONArray array = root.optJSONArray("response");
-        ArrayList<Message> messages = parseMessages(array, chat_id<=0, uid, chat_id>0, me);
-        return messages;
+        return parseMessages(array, chat_id<=0, uid, chat_id>0, me);
     }
     
     //http://vkontakte.ru/developers.php?o=-1&p=messages.getDialogs
-    public ArrayList<Message> getMessagesDialogs(long time_offset, int count) throws MalformedURLException, IOException, JSONException, KException{
+    public Collection<Message> getMessagesDialogs(long time_offset, int count) throws MalformedURLException, IOException, JSONException, KException{
         Params params = new Params("messages.getDialogs");
         if (time_offset!=0)
             params.put("time_offset", time_offset);
@@ -565,11 +563,10 @@ public class Api {
         params.put("preview_length","0");
         JSONObject root = sendRequest(params);
         JSONArray array = root.optJSONArray("response");
-        ArrayList<Message> messages = parseMessages(array, false, 0, false ,0);
-        return messages;
+        return parseMessages(array, false, 0, false ,0);
     }
 
-    private ArrayList<Message> parseMessages(JSONArray array, boolean from_history, long history_uid, boolean from_chat, long me) throws JSONException {
+    private Collection<Message> parseMessages(JSONArray array, boolean from_history, long history_uid, boolean from_chat, long me) throws JSONException {
         ArrayList<Message> messages = new ArrayList<Message>();
         if (array != null) {
             int category_count = array.length();
