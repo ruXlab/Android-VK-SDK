@@ -206,7 +206,7 @@ public class Api {
     public ArrayList<User> getFriends(Long user_id, String fields, Integer lid) throws MalformedURLException, IOException, JSONException, KException{
         Params params = new Params("friends.get");
         if(fields==null)
-            fields="first_name,last_name,photo_medium,online";
+            fields="first_name,last_name,nickname,photo_medium,photo,online,sex";
         params.put("fields",fields);
         params.put("uid",user_id);
         params.put("lid", lid);
@@ -535,8 +535,7 @@ public class Api {
         params.put("preview_length","0");
         JSONObject root = sendRequest(params);
         JSONArray array = root.optJSONArray("response");
-        ArrayList<Message> messages = parseMessages(array, false, 0, false, 0);
-        return messages;
+        return parseMessages(array, false, 0, false, 0);
     }
     
     //http://vkontakte.ru/developers.php?o=-1&p=messages.getHistory
@@ -551,8 +550,7 @@ public class Api {
             params.put("count", count);
         JSONObject root = sendRequest(params);
         JSONArray array = root.optJSONArray("response");
-        ArrayList<Message> messages = parseMessages(array, chat_id<=0, uid, chat_id>0, me);
-        return messages;
+        return parseMessages(array, chat_id<=0, uid, chat_id>0, me);
     }
     
     //http://vkontakte.ru/developers.php?o=-1&p=messages.getDialogs
@@ -565,8 +563,7 @@ public class Api {
         params.put("preview_length","0");
         JSONObject root = sendRequest(params);
         JSONArray array = root.optJSONArray("response");
-        ArrayList<Message> messages = parseMessages(array, false, 0, false ,0);
-        return messages;
+        return parseMessages(array, false, 0, false ,0);
     }
 
     private ArrayList<Message> parseMessages(JSONArray array, boolean from_history, long history_uid, boolean from_chat, long me) throws JSONException {
