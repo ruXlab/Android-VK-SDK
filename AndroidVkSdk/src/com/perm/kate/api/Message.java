@@ -15,14 +15,28 @@ public class Message {
 	public String body;
 	public boolean read_state;
 	public boolean is_out;
-	public ArrayList<Attachment> attachments = null;
-	public ArrayList<Message> fwdMessages = null;
+	public List<Attachment> attachments = null;
+	public List<Message> fwdMessages = null;
 	public Long chat_id;
 	private String attachmentsJSON = "";
 	private String geoJSON = "";
 	private String fwdMessagesJSON = "";
 
-	private static final List mEmptyList = new ArrayList(0);
+	@SuppressWarnings("rawtypes")
+	private static final List emptyList = new ArrayList(0);
+
+	
+	public static int UNREAD = 1; // сообщение не прочитано
+	public static int OUTBOX = 2; // исходящее сообщение
+	public static int REPLIED = 4; // на сообщение был создан ответ
+	public static int IMPORTANT = 8; // помеченное сообщение
+	public static int CHAT = 16; // сообщение отправлено через диалог
+	public static int FRIENDS = 32; // сообщение отправлено другом
+	public static int SPAM = 64; // сообщение помечено как "Спам"
+	public static int DELETED = 128; // сообщение удалено (в корзине)
+	public static int FIXED = 256; // сообщение проверено пользователем на спам
+	public static int MEDIA = 512; // сообщение содержит медиаконтент
+	public static int BESEDA = 8192; // беседа
 
 	public static Message parse(JSONObject o, boolean from_history,
 			long history_uid, boolean from_chat, long me)
@@ -55,17 +69,6 @@ public class Message {
 		return m;
 	}
 
-	public static int UNREAD = 1; // сообщение не прочитано
-	public static int OUTBOX = 2; // исходящее сообщение
-	public static int REPLIED = 4; // на сообщение был создан ответ
-	public static int IMPORTANT = 8; // помеченное сообщение
-	public static int CHAT = 16; // сообщение отправлено через диалог
-	public static int FRIENDS = 32; // сообщение отправлено другом
-	public static int SPAM = 64; // сообщение помечено как "Спам"
-	public static int DELETED = 128; // сообщение удалено (в корзине)
-	public static int FIXED = 256; // сообщение проверено пользователем на спам
-	public static int MEDIA = 512; // сообщение содержит медиаконтент
-	public static int BESEDA = 8192; // беседа
 
 	public static Message parse(JSONArray a) throws JSONException {
 		Message m = new Message();
@@ -100,6 +103,9 @@ public class Message {
 		this.date = date;
 	}
 
+	/**
+	 * Get interlocutor's userId or member in chat 
+	 */
 	public long getUserId() {
 		return uid;
 	}
@@ -148,18 +154,29 @@ public class Message {
 		this.is_out = is_out;
 	}
 
+	/**
+	 * Return attachments list (may be empty)
+	 */
+	@SuppressWarnings("unchecked")
 	public List<Attachment> getAttachments() {
 		if (attachments == null) {
 			try {
 				attachments = Attachment.parseAttachments(attachmentsJSON, 0,
 						0, geoJSON);
 			} catch (JSONException e) {
-				attachments = new ArrayList<Attachment>(0);
+				attachments = emptyList;
 			}
 		}
 		return attachments;
 	}
 
+	/**
+	 * Get json-serialized representation of forwarded messages.
+	 * May be empty string
+	 */
+	public String getAttachmentsJSON() {
+		return attachmentsJSON;
+	}
 
 	public void setAttachments(String attachmentsJSONString) {
 		this.attachmentsJSON = attachmentsJSONString;
@@ -190,7 +207,7 @@ public class Message {
 			try {
 				final JSONArray jsonArray = new JSONArray(fwdMessagesJSON);
 				final int cnt = jsonArray.length();
-				if (cnt == 0) return mEmptyList;
+				if (cnt == 0) return emptyList;
 
 				fwdMessages = new ArrayList<Message>(cnt);
 				for (int i = 0; i < jsonArray.length(); i++) {
@@ -198,8 +215,7 @@ public class Message {
 							0, false, 0L));
 				}
 			} catch (JSONException e) {
-				// TODO Auto-generated catch block
-				e.printStackTrace();
+				fwdMessages = emptyList;
 			}
 		}
 		return fwdMessages;
