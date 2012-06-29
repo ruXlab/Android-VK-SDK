@@ -198,6 +198,13 @@ public class Message {
 	}
 
 	/**
+	 * Set string-serialized forwarded messages
+	 */
+	public void setFwdMessages(String fwdMessagesJson) {
+		fwdMessagesJSON = fwdMessagesJson;
+	}
+	
+	/**
 	 * Return array of fwdMessages (if exists).
 	 * Lazy parsing
 	 */
