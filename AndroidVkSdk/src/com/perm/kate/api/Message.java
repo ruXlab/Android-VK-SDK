@@ -1,6 +1,8 @@
 package com.perm.kate.api;
 
 import java.util.ArrayList;
+import java.util.List;
+
 import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
@@ -14,9 +16,13 @@ public class Message {
 	public boolean read_state;
 	public boolean is_out;
 	public ArrayList<Attachment> attachments = null;
-	private String attachmentsJSON;
+	public ArrayList<Message> fwdMessages = null;
 	public Long chat_id;
-	private String geoJSON;
+	private String attachmentsJSON = "";
+	private String geoJSON = "";
+	private String fwdMessagesJSON = "";
+
+	private static final List mEmptyList = new ArrayList(0);
 
 	public static Message parse(JSONObject o, boolean from_history,
 			long history_uid, boolean from_chat, long me)
@@ -45,6 +51,7 @@ public class Message {
 
 		m.attachmentsJSON = o.optString("attachments");
 		m.geoJSON = o.optString("geo");
+		m.fwdMessagesJSON = o.optString("fwd_messages");
 		return m;
 	}
 
@@ -141,7 +148,7 @@ public class Message {
 		this.is_out = is_out;
 	}
 
-	public ArrayList<Attachment> getAttachments() {
+	public List<Attachment> getAttachments() {
 		if (attachments == null) {
 			try {
 				attachments = Attachment.parseAttachments(attachmentsJSON, 0,
@@ -153,9 +160,6 @@ public class Message {
 		return attachments;
 	}
 
-	public void setAttachments(ArrayList<Attachment> attachments) {
-		this.attachments = attachments;
-	}
 
 	public void setAttachments(String attachmentsJSONString) {
 		this.attachmentsJSON = attachmentsJSONString;
@@ -168,11 +172,43 @@ public class Message {
 	public void setChatId(Long chat_id) {
 		this.chat_id = chat_id;
 	}
-	
+
 	/**
 	 * Check if this message is a group message
 	 */
 	public boolean isChat() {
 		return chat_id != null && chat_id != 0;
+	}
+
+	/**
+	 * Return array of fwdMessages (if exists).
+	 * Lazy parsing
+	 */
+	@SuppressWarnings("unchecked")
+	public List<Message> getFwdMessages() {
+		if (fwdMessages == null) {
+			try {
+				final JSONArray jsonArray = new JSONArray(fwdMessagesJSON);
+				final int cnt = jsonArray.length();
+				if (cnt == 0) return mEmptyList;
+
+				fwdMessages = new ArrayList<Message>(cnt);
+				for (int i = 0; i < jsonArray.length(); i++) {
+					fwdMessages.add(Message.parse(jsonArray.getJSONObject(i), false,
+							0, false, 0L));
+				}
+			} catch (JSONException e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			}
+		}
+		return fwdMessages;
+	}
+	
+	/**
+	 * Get json-serialized representation of forwarded messages
+	 */
+	public String getFwdMessagesJSON() {
+		return fwdMessagesJSON;
 	}
 }
