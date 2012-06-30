@@ -38,6 +38,20 @@ public class Message {
 	public static int MEDIA = 512; // сообщение содержит медиаконтент
 	public static int BESEDA = 8192; // беседа
 
+	public static Message parse(JSONObject o) {
+		final Message msg = new Message();
+		msg.setUserId(o.optLong("uid"));
+		msg.setId(o.optLong("mid"));
+		msg.setChatId(o.optLong("chat_id"));
+		msg.setBody(o.optString("body"));
+		msg.setTitle(o.optString("title"));
+		msg.attachmentsJSON = o.optString("attachments");
+		msg.fwdMessagesJSON = o.optString("fwd_messages");
+		msg.geoJSON = o.optString("geo");
+		
+		return msg;
+	}
+	
 	public static Message parse(JSONObject o, boolean from_history,
 			long history_uid, boolean from_chat, long me)
 			throws NumberFormatException, JSONException {
@@ -52,7 +66,7 @@ public class Message {
 			m.is_out = !(from_id == history_uid);
 		} else {
 			m.uid = o.getLong("uid");
-			m.is_out = o.getInt("out") == 1;
+			m.is_out = o.optInt("out") == 1;
 		}
 		m.mid = o.getLong("mid");
 		m.date = o.getLong("date") * 1000;
@@ -217,9 +231,9 @@ public class Message {
 				if (cnt == 0) return emptyList;
 
 				fwdMessages = new ArrayList<Message>(cnt);
-				for (int i = 0; i < jsonArray.length(); i++) {
-					fwdMessages.add(Message.parse(jsonArray.getJSONObject(i), false,
-							0, false, 0L));
+				for (int i = 0; i < cnt; i++) {
+					final Message m = Message.parse(jsonArray.getJSONObject(i)); 
+					fwdMessages.add(m);
 				}
 			} catch (JSONException e) {
 				fwdMessages = emptyList;
