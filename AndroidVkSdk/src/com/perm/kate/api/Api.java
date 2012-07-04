@@ -1452,11 +1452,16 @@ public class Api {
         return root.getInt("response");
     }
     
-    //http://vkontakte.ru/developers.php?oid=-1&p=execute
-    public void execute(String code) throws MalformedURLException, IOException, JSONException, KException {
+    /**
+     * A universal method that allows to call a sequence of other methods whilst saving and filtering transitory results. 
+     * @param code algorithm code in VKScript 
+     * @return Returns data requested by the algorithm 
+     * @see http://vk.com/developers.php?oid=-1&p=execute
+     */
+    public JSONObject execute(String code) throws MalformedURLException, IOException, JSONException, KException {
         Params params = new Params("execute");
         params.put("code", code);
-        sendRequest(params);
+        return sendRequest(params);
     }
     
     //http://vkontakte.ru/developers.php?oid=-1&p=photos.delete
