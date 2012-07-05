@@ -37,7 +37,7 @@ public class Api {
     //TODO: it's not faster, even slower on slow devices. Maybe we should add an option to disable it. It's only good for paid internet connection.
     static boolean enable_compression=true;
     
-    private JSONObject lastResult = null;
+    private String lastResult = null;
     
     /*** utils methods***/
     private void checkError(JSONObject root) throws JSONException,KException {
@@ -72,15 +72,17 @@ public class Api {
             }
         }
         Log.i(TAG, "response="+response);
-        lastResult = new JSONObject(response);
-        checkError(lastResult);
-        return lastResult;
+        final JSONObject root = new JSONObject(response);
+        checkError(root);
+        lastResult = root.optString("response", null);
+        return root;
     }
 
     /**
-     * Return last response from server
+     * Return last response from server.
+     * Useful for caching results
      */
-    public JSONObject getLastResult() {
+    public String getLastResult() {
 		return lastResult;
 	}
 
