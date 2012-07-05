@@ -8,14 +8,18 @@ import java.net.MalformedURLException;
 import java.net.URL;
 import java.util.ArrayList;
 import java.util.Collection;
+import java.util.List;
 import java.util.zip.GZIPInputStream;
+
 import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
-import com.perm.utils.Utils;
-import com.perm.utils.WrongResponseCodeException;
+
 import android.text.Html;
 import android.util.Log;
+
+import com.perm.utils.Utils;
+import com.perm.utils.WrongResponseCodeException;
 
 public class Api {
     static final String TAG="Kate.Api";
@@ -324,7 +328,7 @@ public class Api {
     }
     
     //http://vkontakte.ru/developers.php?o=-1&p=photos.get
-    public ArrayList<Photo> getPhotos(Long uid, Long aid) throws MalformedURLException, IOException, JSONException, KException{
+    public List<Photo> getPhotos(Long uid, Long aid) throws MalformedURLException, IOException, JSONException, KException{
         Params params = new Params("photos.get");
         if(uid>0)
             params.put("uid", uid);
@@ -335,13 +339,12 @@ public class Api {
         JSONObject root = sendRequest(params);
         JSONArray array = root.optJSONArray("response");
         if (array == null)
-            return new ArrayList<Photo>(); 
-        ArrayList<Photo> photos = parsePhotos(array);
-        return photos;
-    }
+            return new ArrayList<Photo>(0); 
+        return parsePhotos(array);
+   }
     
     //http://vkontakte.ru/developers.php?o=-1&p=photos.getUserPhotos
-    public ArrayList<Photo> getUserPhotos(Long uid) throws MalformedURLException, IOException, JSONException, KException{
+    public List<Photo> getUserPhotos(Long uid) throws MalformedURLException, IOException, JSONException, KException{
         Params params = new Params("photos.getUserPhotos");
         params.put("uid", uid);
         params.put("sort","0");
@@ -350,12 +353,11 @@ public class Api {
         JSONArray array = root.optJSONArray("response");
         if (array == null)
             return new ArrayList<Photo>(); 
-        ArrayList<Photo> photos = parsePhotos(array);
-        return photos;
+        return parsePhotos(array);
     }
 
     //http://vkontakte.ru/developers.php?o=-1&p=photos.getAll
-    public ArrayList<Photo> getAllPhotos(Long owner_id, Long offset, Long count) throws MalformedURLException, IOException, JSONException, KException{
+    public List<Photo> getAllPhotos(Long owner_id, Long offset, Long count) throws MalformedURLException, IOException, JSONException, KException{
         Params params = new Params("photos.getAll");
         params.put("owner_id", owner_id);
         params.put("offset", offset);
@@ -575,7 +577,7 @@ public class Api {
         return parseMessages(array, false, 0, false ,0);
     }
 
-    private ArrayList<Message> parseMessages(JSONArray array, boolean from_history, long history_uid, boolean from_chat, long me) throws JSONException {
+    public static ArrayList<Message> parseMessages(JSONArray array, boolean from_history, long history_uid, boolean from_chat, long me) throws JSONException {
         ArrayList<Message> messages = new ArrayList<Message>();
         if (array != null) {
             int category_count = array.length();
@@ -710,7 +712,7 @@ public class Api {
 
     /*** for audio ***/
     //http://vkontakte.ru/developers.php?o=-1&p=audio.get
-    public ArrayList<Audio> getAudio(Long uid, Long gid, Collection<Long> aids) throws MalformedURLException, IOException, JSONException, KException{
+    public List<Audio> getAudio(Long uid, Long gid, Collection<Long> aids) throws MalformedURLException, IOException, JSONException, KException{
         Params params = new Params("audio.get");
         params.put("uid", uid);
         params.put("gid", gid);
@@ -890,7 +892,7 @@ public class Api {
     }
     
     //http://vkontakte.ru/developers.php?o=-1&p=photos.save
-    public ArrayList<Photo> photosSave(String server, String photos_list, Long aid, Long group_id, String hash) throws MalformedURLException, IOException, JSONException, KException {
+    public List<Photo> photosSave(String server, String photos_list, Long aid, Long group_id, String hash) throws MalformedURLException, IOException, JSONException, KException {
         Params params = new Params("photos.save");
         params.put("server",server);
         params.put("photos_list",photos_list);
@@ -899,12 +901,11 @@ public class Api {
         params.put("hash",hash);
         JSONObject root = sendRequest(params);
         JSONArray array=root.getJSONArray("response");
-        ArrayList<Photo> photos = parsePhotos(array);
-        return photos;
+        return parsePhotos(array);
     }
     
     //http://vkontakte.ru/developers.php?o=-1&p=photos.saveWallPhoto
-    public ArrayList<Photo> saveWallPhoto(String server, String photo, String hash, Long user_id, Long group_id) throws MalformedURLException, IOException, JSONException, KException {
+    public List<Photo> saveWallPhoto(String server, String photo, String hash, Long user_id, Long group_id) throws MalformedURLException, IOException, JSONException, KException {
         Params params = new Params("photos.saveWallPhoto");
         params.put("server",server);
         params.put("photo",photo);
@@ -913,8 +914,7 @@ public class Api {
         params.put("gid",group_id);
         JSONObject root = sendRequest(params);
         JSONArray array=root.getJSONArray("response");
-        ArrayList<Photo> photos = parsePhotos(array);
-        return photos;
+        return parsePhotos(array);
     }
     
     //http://vkontakte.ru/developers.php?oid=-1&p=saveAudio
@@ -931,15 +931,14 @@ public class Api {
     }
     
     //http://vkontakte.ru/developers.php?oid=-1&p=photos.saveMessagesPhoto
-    public ArrayList<Photo> saveMessagesPhoto(String server, String photo, String hash) throws MalformedURLException, IOException, JSONException, KException {
+    public List<Photo> saveMessagesPhoto(String server, String photo, String hash) throws MalformedURLException, IOException, JSONException, KException {
         Params params = new Params("photos.saveMessagesPhoto");
         params.put("server",server);
         params.put("photo",photo);
         params.put("hash",hash);
         JSONObject root = sendRequest(params);
         JSONArray array=root.getJSONArray("response");
-        ArrayList<Photo> photos = parsePhotos(array);
-        return photos;
+        return parsePhotos(array);
     }
     
     //http://vkontakte.ru/developers.php?o=-1&p=photos.saveProfilePhoto
@@ -956,7 +955,7 @@ public class Api {
         return res;
     }
 
-    private ArrayList<Photo> parsePhotos(JSONArray array) throws JSONException {
+    public static List<Photo> parsePhotos(JSONArray array) throws JSONException {
         ArrayList<Photo> photos=new ArrayList<Photo>(); 
         int category_count=array.length(); 
         for(int i=0; i<category_count; ++i){
@@ -1046,7 +1045,7 @@ public class Api {
     }
     
     //http://vkontakte.ru/developers.php?o=-1&p=audio.search
-    public ArrayList<Audio> searchAudio(String q, String sort, String lyrics, Long count, Long offset) throws MalformedURLException, IOException, JSONException, KException{
+    public List<Audio> searchAudio(String q, String sort, String lyrics, Long count, Long offset) throws MalformedURLException, IOException, JSONException, KException{
         Params params = new Params("audio.search");
         params.put("q", q);
         params.put("sort", sort);
@@ -1059,7 +1058,7 @@ public class Api {
         return parseAudioList(array, 1);
     }
 
-    private ArrayList<Audio> parseAudioList(JSONArray array, int type_array) //type_array must be 0 or 1
+    public static List<Audio> parseAudioList(JSONArray array, int type_array) //type_array must be 0 or 1
             throws JSONException {
         ArrayList<Audio> audios = new ArrayList<Audio>();
         if (array != null) {
@@ -1170,19 +1169,18 @@ public class Api {
     }
     
     //http://vkontakte.ru/developers.php?o=-1&p=photos.getById
-    public ArrayList<Photo> getPhotosById(String photos) throws MalformedURLException, IOException, JSONException, KException{
+    public List<Photo> getPhotosById(String photos) throws MalformedURLException, IOException, JSONException, KException{
         Params params = new Params("photos.getById");
         params.put("photos", photos);
         JSONObject root = sendRequest(params);
         JSONArray array = root.optJSONArray("response");
         if (array == null)
             return new ArrayList<Photo>(); 
-        ArrayList<Photo> photos1 = parsePhotos(array);
-        return photos1;
+        return parsePhotos(array);
     }
     
     //http://vkontakte.ru/developers.php?oid=-1&p=groups.get
-    public ArrayList<Group> getUserGroups(Long user_id) throws MalformedURLException, IOException, JSONException, KException{
+    public List<Group> getUserGroups(Long user_id) throws MalformedURLException, IOException, JSONException, KException{
         Params params = new Params("groups.get");
         params.put("extended","1");
         params.put("uid",user_id);
@@ -1248,7 +1246,7 @@ public class Api {
     }
     
     //http://vkontakte.ru/developers.php?o=-1&p=video.search
-    public ArrayList<Video> searchVideo(String q, String sort, String hd, Long count, Long offset) throws MalformedURLException, IOException, JSONException, KException {
+    public List<Video> searchVideo(String q, String sort, String hd, Long count, Long offset) throws MalformedURLException, IOException, JSONException, KException {
         Params params = new Params("video.search");
         params.put("q", q);
         params.put("sort", sort);
@@ -1275,7 +1273,7 @@ public class Api {
     }
     
     //no documentation
-    public ArrayList<User> searchUser(String q, String fields, Long count, Long offset) throws MalformedURLException, IOException, JSONException, KException {
+    public List<User> searchUser(String q, String fields, Long count, Long offset) throws MalformedURLException, IOException, JSONException, KException {
         Params params = new Params("users.search");
         params.put("q", q);
         params.put("count", count);
@@ -1556,7 +1554,7 @@ public class Api {
     }
     
     //http://vk.com/developers.php?o=-1&p=photos.getTags
-    public ArrayList<PhotoTag> getPhotoTagsById(Long pid, Long owner_id) throws MalformedURLException, IOException, JSONException, KException{
+    public List<PhotoTag> getPhotoTagsById(Long pid, Long owner_id) throws MalformedURLException, IOException, JSONException, KException{
         Params params = new Params("photos.getTags");
         params.put("owner_id", owner_id);
         params.put("pid", pid);
@@ -1564,11 +1562,11 @@ public class Api {
         JSONArray array = root.optJSONArray("response");
         if (array == null)
             return new ArrayList<PhotoTag>(); 
-        ArrayList<PhotoTag> photo_tags = parsePhotoTags(array, pid, owner_id);
+        List<PhotoTag> photo_tags = parsePhotoTags(array, pid, owner_id);
         return photo_tags;
     }
     
-    private ArrayList<PhotoTag> parsePhotoTags(JSONArray array, Long pid, Long owner_id) throws JSONException {
+    public static List<PhotoTag> parsePhotoTags(JSONArray array, Long pid, Long owner_id) throws JSONException {
         ArrayList<PhotoTag> photo_tags=new ArrayList<PhotoTag>(); 
         int category_count=array.length(); 
         for(int i=0; i<category_count; ++i){
@@ -1607,7 +1605,7 @@ public class Api {
     
     /*** topics region ***/
     //http://kate1.unfuddle.com/a#/projects/2/tickets/by_number/340?cycle=true
-    public ArrayList<GroupTopic> getGroupTopics(long gid, int extended, int count, int offset) throws MalformedURLException, IOException, JSONException, KException {
+    public List<GroupTopic> getGroupTopics(long gid, int extended, int count, int offset) throws MalformedURLException, IOException, JSONException, KException {
         Params params = new Params("board.getTopics");
         params.put("gid", gid);
         if (extended == 1)
@@ -1704,7 +1702,7 @@ public class Api {
     /*** end topics region ***/
     
     //http://vk.com/developers.php?oid=-1&p=groups.getById
-    public ArrayList<Group> getGroups(Collection<Long> uids, String domain, String fields) throws MalformedURLException, IOException, JSONException, KException{
+    public List<Group> getGroups(Collection<Long> uids, String domain, String fields) throws MalformedURLException, IOException, JSONException, KException{
         if (uids == null && domain == null)
             return null;
         if (uids.size() == 0 && domain == null)
@@ -1746,7 +1744,7 @@ public class Api {
     }
     
     //no documentation
-    public ArrayList<Group> searchGroup(String q, Long count, Long offset) throws MalformedURLException, IOException, JSONException, KException {
+    public List<Group> searchGroup(String q, Long count, Long offset) throws MalformedURLException, IOException, JSONException, KException {
         Params params = new Params("groups.search");
         params.put("q", q);
         params.put("count", count);
