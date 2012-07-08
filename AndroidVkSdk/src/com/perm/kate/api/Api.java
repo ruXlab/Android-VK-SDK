@@ -333,7 +333,7 @@ public class Api {
      */
     public String getMessagesPhotoUploadServer() throws MalformedURLException, JSONException, IOException, KException {
         Params params = new Params("photos.getMessagesUploadServer");
-        return sendRequest(params).getString("upload_url");
+        return sendRequest(params).getJSONObject("response").getString("upload_url");
     }
 
     /**
@@ -346,8 +346,8 @@ public class Api {
     	params.put("server", server);
     	params.put("photo", photo);
     	params.put("hash", hash);
-    	JSONObject resp = sendRequest(params);
-    	return Photo.parse(resp);
+    	JSONArray resp = sendRequest(params).getJSONArray("response");
+    	return parsePhotos(resp).get(0);
     }
     
     //http://vkontakte.ru/developers.php?o=-1&p=photos.get
@@ -1487,6 +1487,7 @@ public class Api {
      * @param code algorithm code in VKScript 
      * @return Returns data requested by the algorithm 
      * @see http://vk.com/developers.php?oid=-1&p=execute
+     *
      */
     public JSONObject execute(String code) throws MalformedURLException, IOException, JSONException, KException {
         Params params = new Params("execute");

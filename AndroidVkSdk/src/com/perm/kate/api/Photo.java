@@ -20,12 +20,13 @@ public class Photo implements Serializable {
     public long created;
     public Integer like_count;
     public Boolean user_likes;
+    public String id;
 
     public static Photo parse(JSONObject o) throws NumberFormatException, JSONException{
         Photo p = new Photo();
-        p.pid = o.getLong("pid");
+        p.pid = o.optLong("pid");
         p.aid = o.optLong("aid");
-        p.owner_id = o.getString("owner_id");
+        p.owner_id = o.optString("owner_id");
         p.src = o.getString("src");
         p.src_small = o.optString("src_small");
         p.src_big = o.getString("src_big");
@@ -34,6 +35,7 @@ public class Photo implements Serializable {
         p.src_xxxbig = o.optString("src_xxxbig");
         p.phototext = Api.unescape(o.optString("text"));
         p.created = o.optLong("created");
+        p.id = o.optString("id");
         
         if (o.has("likes")){
             JSONObject jlikes = o.getJSONObject("likes");
