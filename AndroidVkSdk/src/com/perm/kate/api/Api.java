@@ -335,6 +335,20 @@ public class Api {
         Params params = new Params("photos.getMessagesUploadServer");
         return sendRequest(params).getString("upload_url");
     }
+
+    /**
+     * Return information about successfully uploaded photo (using getMessagesPhotoUploadServer())  
+     * @return uploaded photo object
+     * @see http://vk.com/pages?oid=-1&p=photos.saveMessagesPhoto
+     */
+    public Photo saveMessagePhoto(String server, String photo, String hash) throws MalformedURLException, IOException, JSONException, KException {
+        Params params = new Params("photos.saveMessagesPhoto");
+    	params.put("server", server);
+    	params.put("photo", photo);
+    	params.put("hash", hash);
+    	JSONObject resp = sendRequest(params);
+    	return Photo.parse(resp);
+    }
     
     //http://vkontakte.ru/developers.php?o=-1&p=photos.get
     public List<Photo> getPhotos(Long uid, Long aid) throws MalformedURLException, IOException, JSONException, KException{
