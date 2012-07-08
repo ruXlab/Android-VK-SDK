@@ -327,6 +327,15 @@ public class Api {
         return albums;
     }
     
+    /**
+     * Get server for uploading photo (for private message)
+     * @see http://vk.com/pages?oid=-1&p=photos.getMessagesUploadServer
+     */
+    public String getMessagesPhotoUploadServer() throws MalformedURLException, JSONException, IOException, KException {
+        Params params = new Params("photos.getMessagesUploadServer");
+        return sendRequest(params).getString("upload_url");
+    }
+    
     //http://vkontakte.ru/developers.php?o=-1&p=photos.get
     public List<Photo> getPhotos(Long uid, Long aid) throws MalformedURLException, IOException, JSONException, KException{
         Params params = new Params("photos.get");
