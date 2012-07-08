@@ -1876,4 +1876,16 @@ public class Api {
         sendRequest(params);
     }
 
+    /**
+     * Get information about chat
+     * @param chatId chat
+     * @return populated Chat object
+     */
+    public Chat getChat(long chatId) throws IOException, KException, JSONException {
+        Params params = new Params("messages.getChat");
+        params.put("chat_id", chatId);
+        JSONObject resp = sendRequest(params).getJSONObject("response");
+        return Chat.parse(resp);
+    }
+
 }
