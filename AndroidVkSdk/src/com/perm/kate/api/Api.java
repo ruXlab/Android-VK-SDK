@@ -1827,4 +1827,53 @@ public class Api {
         JSONObject root = sendRequest(params);
         return root.getString("response");
     }
+
+    /**
+     * Create multi-user chat
+     * @param uids list of users which will added to chat
+     * @param title caption of the chat
+     */
+    public long createChat(List<Long> uids, String title) throws IOException, KException, JSONException {
+        Params params = new Params("messages.createChat");
+        params.put("uids", arrayToString(uids));
+        params.put("title", title);
+        return sendRequest(params).getLong("response");
+    }
+
+
+    /**
+     * Edit multi-user chat (set title of chat)
+     */
+    public void editChat(Long chatId, String title) throws IOException, KException, JSONException {
+        Params params = new Params("messages.editChat");
+        params.put("chat_id", chatId);
+        params.put("title", title);
+        sendRequest(params);
+    }
+
+
+    /**
+     * Add user to conversation
+     * @param chatId user which will be added
+     * @param userId chat
+     */
+    public void addChatUser(long chatId, long userId) throws IOException, KException, JSONException {
+        Params params = new Params("messages.addChatUser");
+        params.put("chat_id", chatId);
+        params.put("uid", userId);
+        sendRequest(params);
+    }
+
+    /**
+     * Remove user from conversation
+     * @param chatId user which will be added
+     * @param userId chat
+     */
+    public void removeChatUser(long chatId, long userId) throws IOException, KException, JSONException {
+        Params params = new Params("messages.removeChatUser");
+        params.put("chat_id", chatId);
+        params.put("uid", userId);
+        sendRequest(params);
+    }
+
 }
