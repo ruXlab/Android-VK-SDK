@@ -652,17 +652,18 @@ public class Api {
         return null;
     }
 
-    //http://vkontakte.ru/developers.php?o=-1&p=messages.delete
-    public String deleteMessage(Long mid) throws MalformedURLException, IOException, JSONException, KException{
+
+    /**
+     * Delete specified messeges
+     * @param mids list of messageId
+     * @see http://vk.com/developers.php?o=-1&p=messages.delete
+     */
+    public void deleteMessages(List<Long> mids) throws MalformedURLException, IOException, JSONException, KException{
         Params params = new Params("messages.delete");
-        params.put("mid", mid);
-        JSONObject root = sendRequest(params);
-        Object response_code = root.opt("response");
-        if (response_code != null)
-            return String.valueOf(response_code);
-        return null;
+        params.put("mids", arrayToString(mids));
+        sendRequest(params);
     }
-    
+
     /*** for status***/
     //http://vkontakte.ru/developers.php?o=-1&p=status.get
     public String getStatus(Long uid) throws MalformedURLException, IOException, JSONException, KException{
