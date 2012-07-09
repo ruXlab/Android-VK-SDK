@@ -53,20 +53,20 @@ public class User implements Serializable {
 
 	public static User parse(JSONObject o) throws JSONException {
 		User u = new User();
-		u.uid = Long.parseLong(o.getString("uid"));
-		if (!o.isNull("first_name"))
+		u.uid = o.getLong("uid");
+		if (o.has("first_name"))
 			u.first_name = Api.unescape(o.getString("first_name"));
-		if (!o.isNull("last_name"))
+		if (o.has("last_name"))
 			u.last_name = Api.unescape(o.getString("last_name"));
-		if (!o.isNull("nickname"))
+		if (o.has("nickname"))
 			u.nickname = Api.unescape(o.optString("nickname"));
-		if (!o.isNull("domain"))
+		if (o.has("domain"))
 			u.domain = o.optString("domain");
-		if (!o.isNull("online"))
+		if (o.has("online"))
 			u.online = o.optInt("online") == 1;
-		if (!o.isNull("sex"))
+		if (o.has("sex"))
 			u.sex = Integer.parseInt(o.optString("sex"));
-		if (!o.isNull("bdate"))
+		if (o.has("bdate"))
 			u.birthdate = o.optString("bdate");
 		try {
 			u.city = Integer.parseInt(o.optString("city"));
@@ -76,43 +76,47 @@ public class User implements Serializable {
 			u.country = Integer.parseInt(o.optString("country"));
 		} catch (NumberFormatException ex) {
 		}
-		if (!o.isNull("timezone"))
+		if (o.has("timezone"))
 			u.timezone = o.optInt("timezone");
-		if (!o.isNull("photo"))
+		if (o.has("photo"))
 			u.photo = o.optString("photo");
-		if (!o.isNull("photo_medium"))
+        if (o.has("photo_medium_rec"))
+            u.photo_medium = o.optString("photo_medium_rec");
+        else if (o.has("photo_medium"))
 			u.photo_medium = o.optString("photo_medium");
-		if (!o.isNull("photo_big"))
+        if (o.has("photo_big_rec"))
+            u.photo_big = o.optString("photo_big_rec");
+        else if (o.has("photo_big"))
 			u.photo_big = o.optString("photo_big");
-		if (!o.isNull("has_mobile"))
+        if (o.has("has_mobile"))
 			u.has_mobile = o.optInt("has_mobile") == 1;
-		if (!o.isNull("home_phone"))
+		if (o.has("home_phone"))
 			u.home_phone = o.optString("home_phone");
-		if (!o.isNull("mobile_phone"))
+		if (o.has("mobile_phone"))
 			u.mobile_phone = o.optString("mobile_phone");
-		if (!o.isNull("rate"))
+		if (o.has("rate"))
 			u.rate = Integer.parseInt(o.optString("rate"));
 		try {
 			u.faculty = Integer.parseInt(o.optString("faculty"));
 		} catch (NumberFormatException ex) {
 		}
-		if (!o.isNull("faculty_name"))
+		if (o.has("faculty_name"))
 			u.faculty_name = o.optString("faculty_name");
 		try {
 			u.university = Integer.parseInt(o.optString("university"));
 		} catch (NumberFormatException ex) {
 		}
-		if (!o.isNull("university_name"))
+		if (o.has("university_name"))
 			u.university_name = o.optString("university_name");
 		try {
 			u.graduation = Integer.parseInt(o.optString("graduation"));
 		} catch (NumberFormatException ex) {
 		}
-		if (!o.isNull("activity"))
+		if (o.has("activity"))
 			u.status = Api.unescape(o.optString("activity"));
-		if (!o.isNull("relation"))
+		if (o.has("relation"))
 			u.relation = o.optInt("relation");
-		if (!o.isNull("lists")) {
+		if (o.has("lists")) {
 			JSONArray array = o.optJSONArray("lists");
 			if (array != null) {
 				String ids = "";
@@ -122,12 +126,12 @@ public class User implements Serializable {
 				u.friends_list_ids = ids;
 			}
 		}
-		if (!o.isNull("last_seen")) {
+		if (o.has("last_seen")) {
 			JSONObject object = o.optJSONObject("last_seen");
 			if (object != null)
 				u.last_seen = object.optLong("time");
 		}
-		if (!o.isNull("counters")) {
+		if (o.has("counters")) {
 			JSONObject object = o.optJSONObject("counters");
 			if (object != null) {
 				u.albums_count = object.optInt("albums");
@@ -193,4 +197,26 @@ public class User implements Serializable {
 	public String toString() {
 		return "#" + uid + ": " + first_name + " " + last_name;
 	}
+
+    /**
+     * Indicate sex
+     */
+    public boolean isMale() {
+        return sex == 1;
+    }
+
+    /**
+     * Indicate sex
+     */
+    public boolean isFemale() {
+        return sex == 2;
+    }
+
+    /**
+     * Indicate unknown user's sex
+     */
+    public boolean isUnknownSex() {
+        return sex == 0;
+    }
+
 }
