@@ -6,6 +6,7 @@ import java.io.InputStream;
 import java.net.HttpURLConnection;
 import java.net.MalformedURLException;
 import java.net.URL;
+import java.security.KeyStore;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
@@ -220,7 +221,7 @@ public class Api {
     public ArrayList<User> getFriends(Long user_id, String fields, Integer lid) throws MalformedURLException, IOException, JSONException, KException{
         Params params = new Params("friends.get");
         if(fields==null)
-            fields="first_name,last_name,nickname,photo_medium,photo,online,sex";
+            fields="first_name,last_name,nickname,photo_medium_rec,photo,online,sex";
         params.put("fields",fields);
         params.put("uid",user_id);
         params.put("lid", lid);
@@ -1893,4 +1894,29 @@ public class Api {
         return Chat.parse(resp);
     }
 
+
+    /**
+     * Return extended information about users
+     * http://vk.com/developers.php?oid=-1&p=users.get
+     * @param uids list of userId
+     * @param fields required fields
+     * @param nameCase inclination (nom, gen, dat, acc, ins, abl)
+     * @return users
+     */
+    public List<User> getUsers(List<Long> uids, String fields, String nameCase) throws IOException, KException, JSONException {
+        if (fields == null) fields = DEFAULT_USERS_FIELD;
+        if (nameCase == null) nameCase = "nom";
+
+        Params params = new Params("users.get");
+        params.put("uids", arrayToString(uids));
+        params.put("fields", fields);
+        params.put("name_case", nameCase);
+        JSONArray resp = sendRequest(params).getJSONArray("response");
+        return User.parseUsers(resp);
+    }
+
+    /**
+     * Default required fields
+     */
+    public static String DEFAULT_USERS_FIELD = "uid,first_name,last_name,nickname,sex,photo,photo_medium_rec,online,contacts";
 }
