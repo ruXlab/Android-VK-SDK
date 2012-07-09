@@ -37,7 +37,7 @@ public class Api {
     //TODO: it's not faster, even slower on slow devices. Maybe we should add an option to disable it. It's only good for paid internet connection.
     static boolean enable_compression=true;
     
-    private JSONObject lastResult = null;
+    private String lastResult = null;
     
     /*** utils methods***/
     private void checkError(JSONObject root) throws JSONException,KException {
@@ -72,15 +72,16 @@ public class Api {
             }
         }
         Log.i(TAG, "response="+response);
-        lastResult = new JSONObject(response);
-        checkError(lastResult);
-        return lastResult;
+        JSONObject root = new JSONObject(response);
+        checkError(root);
+        lastResult = root.getString("response");
+        return root;
     }
 
     /**
      * Return last response from server
      */
-    public JSONObject getLastResult() {
+    public String getLastResult() {
 		return lastResult;
 	}
 
@@ -558,7 +559,7 @@ public class Api {
     /*** methods for messages 
      * @throws KException ***/
     //http://vkontakte.ru/developers.php?o=-1&p=messages.get
-    public ArrayList<Message> getMessages(long time_offset, boolean is_out, int count) throws MalformedURLException, IOException, JSONException, KException{
+    public List<Message> getMessages(long time_offset, boolean is_out, int count) throws MalformedURLException, IOException, JSONException, KException{
         Params params = new Params("messages.get");
         if (is_out)
             params.put("out","1");
@@ -573,7 +574,7 @@ public class Api {
     }
     
     //http://vkontakte.ru/developers.php?o=-1&p=messages.getHistory
-    public ArrayList<Message> getMessagesHistory(long uid, long chat_id, long me, Long offset, int count) throws MalformedURLException, IOException, JSONException, KException{
+    public List<Message> getMessagesHistory(long uid, long chat_id, long me, Long offset, int count) throws MalformedURLException, IOException, JSONException, KException{
         Params params = new Params("messages.getHistory");
         if(chat_id<=0)
             params.put("uid",uid);
@@ -586,21 +587,24 @@ public class Api {
         JSONArray array = root.optJSONArray("response");
         return parseMessages(array, chat_id<=0, uid, chat_id>0, me);
     }
-    
-    //http://vkontakte.ru/developers.php?o=-1&p=messages.getDialogs
-    public ArrayList<Message> getMessagesDialogs(long time_offset, int count) throws MalformedURLException, IOException, JSONException, KException{
+
+    /**
+     * Return dialog list for current user
+     * @param offset start from
+     * @param count total messages (should be less than 100)
+     * @return list of messages
+     */
+    public List<Message> getMessagesDialogs(long offset, int count) throws MalformedURLException, IOException, JSONException, KException{
         Params params = new Params("messages.getDialogs");
-        if (time_offset!=0)
-            params.put("time_offset", time_offset);
-        if (count != 0)
-            params.put("count", count);
-        params.put("preview_length","0");
+        if (offset != 0) params.put("offset", offset);
+        if (count != 0) params.put("count", count);
+        params.put("preview_length", 0);
         JSONObject root = sendRequest(params);
         JSONArray array = root.optJSONArray("response");
         return parseMessages(array, false, 0, false ,0);
     }
 
-    public static ArrayList<Message> parseMessages(JSONArray array, boolean from_history, long history_uid, boolean from_chat, long me) throws JSONException {
+    public static List<Message> parseMessages(JSONArray array, boolean from_history, long history_uid, boolean from_chat, long me) throws JSONException {
         ArrayList<Message> messages = new ArrayList<Message>();
         if (array != null) {
             int category_count = array.length();
