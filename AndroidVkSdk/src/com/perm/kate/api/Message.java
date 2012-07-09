@@ -17,8 +17,14 @@ public class Message {
 	public boolean is_out;
 	public List<Attachment> attachments = null;
 	public List<Message> fwdMessages = null;
-	public Long chat_id;
-	private String attachmentsJSON = "";
+	public long chat_id = 0;
+    public List<Long> chat_active = emptyList;
+    public int users_count = 0;
+    public long admin_id = 0;
+
+
+
+    private String attachmentsJSON = "";
 	private String geoJSON = "";
 	private String fwdMessagesJSON = "";
 
@@ -45,6 +51,14 @@ public class Message {
 		msg.setChatId(o.optLong("chat_id"));
 		msg.setBody(o.optString("body"));
 		msg.setTitle(o.optString("title"));
+        if (msg.isChat()) {
+            msg.setChatAdminId(o.optLong("admin_id"));
+            msg.setChatUsersCount(o.optInt("users_count"));
+            String uidsStr[] = o.optString("chat_active").split(",");
+            List<Long> uids = new ArrayList<Long>(uidsStr.length);
+            for(String strVal: uidsStr) uids.add(Long.parseLong(strVal));
+            msg.setChatLastUsers(uids);
+        }
 		msg.attachmentsJSON = o.optString("attachments");
 		msg.fwdMessagesJSON = o.optString("fwd_messages");
 		msg.geoJSON = o.optString("geo");
@@ -74,9 +88,15 @@ public class Message {
 			m.title = Api.unescape(o.getString("title"));
 		m.body = Api.unescape(o.getString("body"));
 		m.read_state = o.getInt("read_state") != 0;
-		if (o.has("chat_id"))
-			m.chat_id = o.getLong("chat_id");
-
+		m.chat_id = o.optLong("chat_id", 0);
+        if (m.isChat()) {
+            m.setChatAdminId(o.optLong("admin_id"));
+            m.setChatUsersCount(o.optInt("users_count"));
+            String uidsStr[] = o.optString("chat_active").split(",");
+            List<Long> uids = new ArrayList<Long>(uidsStr.length);
+            for(String strVal: uidsStr) uids.add(Long.parseLong(strVal));
+            m.setChatLastUsers(uids);
+        }
 		m.attachmentsJSON = o.optString("attachments");
 		m.geoJSON = o.optString("geo");
 		m.fwdMessagesJSON = o.optString("fwd_messages");
@@ -208,7 +228,7 @@ public class Message {
 	 * Check if this message is a group message
 	 */
 	public boolean isChat() {
-		return chat_id != null && chat_id != 0;
+		return chat_id != 0;
 	}
 
 	/**
@@ -248,4 +268,28 @@ public class Message {
 	public String getFwdMessagesJSON() {
 		return fwdMessagesJSON;
 	}
+
+    public List<Long> getChatLastUsers() {
+        return chat_active;
+    }
+
+    public void setChatLastUsers(List<Long> chat_active) {
+        this.chat_active = chat_active;
+    }
+
+    public int getChatUsersCount() {
+        return users_count;
+    }
+
+    public void setChatUsersCount(int users_count) {
+        this.users_count = users_count;
+    }
+
+    public long getChatAdminId() {
+        return admin_id;
+    }
+
+    public void setChatAdminId(long admin_id) {
+        this.admin_id = admin_id;
+    }
 }
