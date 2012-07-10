@@ -51,6 +51,7 @@ public class Message {
 		msg.setChatId(o.optLong("chat_id"));
 		msg.setBody(o.optString("body"));
 		msg.setTitle(o.optString("title"));
+        msg.setDate(o.optLong("date") * 1000L);
         if (msg.isChat()) {
             msg.setChatAdminId(o.optLong("admin_id"));
             msg.setChatUsersCount(o.optInt("users_count"));
