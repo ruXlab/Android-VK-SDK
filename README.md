@@ -2,10 +2,13 @@
 
 Библиотека для ваших Android-приложений, обеспечивающая доступ к VK API.
 
-Это - форк проекта Android-VKontakte-SDK(https://github.com/thest1/Android-VKontakte-SDK)
+Это - форк проекта Android-VKontakte-SDK(https://github.com/thest1/Android-VKontakte-SDK), основная разработка 
+ведётся в репозитарии [android-vk-sdk на bitbucket](https://bitbucket.org/ruX/android-vk-sdk)
+
+Основной задачей этого форка: поддерживать новые Vk API и отформатировать, привести к стандартному java-коду оригинальную библиотеку. 
 
 ## Использование
-Быстро понять принципы работы библиотеки вам поможет демо-проект AndroidVkSdkSample. В нём реализована авторизация и в качестве примера отправка записи на свою стеную.  
+Быстро понять принципы работы библиотеки вам поможет демо-проект AndroidVkSdkSample. В нём реализована авторизация и в качестве примера отправка записи на свою стену.  
 Чтобы подключить библиотеку к своему проекту, нужно выполнить следующие шаги:  
 
 1. Импортировать проект AndroidVkSdk в Eclipse. AndroidVkSdk реализован как Android Library Project.  
@@ -41,10 +44,7 @@
     api.createWallPost(user_id, text, null, null, false, false, false, null, null);
     ```
 
-## Проекты использующие ВКонтакте Android SDK
-<a href="https://play.google.com/store/apps/details?id=com.perm.kate&hl=ru">Kate Mobile</a>  
-Напишите нам, чтобы добавить свой проект в этот список
 
 ## Лицензия
 
-Библиотека распространяется по <a href="https://github.com/thest1/Android-VKontakte-SDK/blob/master/LICENSE">лицензии MIT</a>.
+Библиотека распространяется по [лицензии MIT](https://github.com/thest1/Android-VKontakte-SDK/blob/master/LICENSE).
