@@ -1,5 +1,6 @@
 package com.perm.kate.api;
 
+import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -7,7 +8,7 @@ import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 
-public class Message {
+public class Message implements Serializable {
 	public long date;
 	public long uid;
 	public long mid;
