@@ -20,6 +20,7 @@ public class Attachment implements Serializable {
     public VkPoll poll;
     public Geo geo;
     public Document document;
+    public WallMessage wall;
 
     public static ArrayList<Attachment> parseAttachments(JSONArray attachments, long from_id, long copy_owner_id, JSONObject geo_json) throws JSONException {
         ArrayList<Attachment> attachments_arr=new ArrayList<Attachment>();
@@ -47,6 +48,8 @@ public class Attachment implements Serializable {
                     attachment.note=Note.parse(json_attachment.getJSONObject("note"), false);
                 if(attachment.type.equals("video"))
                     attachment.video=Video.parse(json_attachment.getJSONObject("video"));
+                if(attachment.type.equals("wall"))
+                    attachment.wall=WallMessage.parse(json_attachment.getJSONObject("wall"));
                 if(attachment.type.equals("poll")){
                     attachment.poll=VkPoll.parse(json_attachment.getJSONObject("poll"));
                     if(attachment.poll.owner_id==0){
