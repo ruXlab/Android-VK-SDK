@@ -381,6 +381,30 @@ public class Api {
         return parsePhotos(array);
     }
 
+    /**
+     * Get list of user's profile photos
+     * http://vk.com/developers.php?oid=-1&p=photos.getProfile
+     * @param uid userId
+     * @param needLikes if true also return likes
+     * @param limit if not null limit number of photos
+     * @param offset if not null
+     * @return list of photos
+     */
+    public List<Photo> getProfilePhotos(long uid, boolean needLikes, Integer limit, Integer offset) throws IOException, KException, JSONException {
+        Params params = new Params("photos.getProfile");
+        params.put("uid", uid);
+        params.put("extended", needLikes ? 1 : 0);
+        if (limit != null) {
+            params.put("limit", limit);
+            if (offset != null) params.put("offset", offset);
+        }
+
+        JSONObject root = sendRequest(params);
+        JSONArray array = root.optJSONArray("response");
+        if (array == null) return new ArrayList<Photo>();
+        return parsePhotos(array);
+    }
+
     //http://vkontakte.ru/developers.php?o=-1&p=photos.getAll
     public List<Photo> getAllPhotos(Long owner_id, Long offset, Long count) throws MalformedURLException, IOException, JSONException, KException{
         Params params = new Params("photos.getAll");
