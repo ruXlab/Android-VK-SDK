@@ -6,10 +6,7 @@ import java.io.InputStream;
 import java.net.HttpURLConnection;
 import java.net.MalformedURLException;
 import java.net.URL;
-import java.security.KeyStore;
-import java.util.ArrayList;
-import java.util.Collection;
-import java.util.List;
+import java.util.*;
 import java.util.zip.GZIPInputStream;
 
 import org.json.JSONArray;
@@ -1392,7 +1389,56 @@ public class Api {
         Params params = new Params("activity.online");
         sendRequest(params);
     }
-    
+
+    /**
+     * Relationship types between users
+     */
+    public static enum FriendStatus {
+        NOT_FRIEND,
+        REQUEST_SENT,
+        REQUEST_RECEIVED,
+        FRIEND;
+
+        /**
+         * Return status by given friend_status value from vk
+         */
+        public static FriendStatus factory(int vkFriendStatus) {
+            switch (vkFriendStatus) {
+            case 0: return NOT_FRIEND;
+            case 1: return REQUEST_SENT;
+            case 2: return REQUEST_RECEIVED;
+            case 3: return FRIEND;
+            }
+            return NOT_FRIEND;
+        }
+    };
+
+
+    /**
+     * Check relationships between users
+     */
+    public Map<Long, FriendStatus> areFriends(List<Long> uids) throws IOException, KException, JSONException {
+        Params params = new Params("friends.areFriends");
+        params.put("uids", arrayToString(uids));
+
+        Map<Long, FriendStatus> result = new HashMap<Long, FriendStatus>();
+
+        JSONObject root = sendRequest(params);
+        JSONArray statuses = root.getJSONArray("response");
+        for(int i = 0; i < statuses.length(); i++) {
+            final JSONObject o = statuses.getJSONObject(i);
+            result.put(o.getLong("uid"), FriendStatus.factory(o.getInt("friend_status")));
+        }
+        return result;
+    }
+
+    /**
+     * Check relationships with given user
+     */
+    public FriendStatus isFriend(long uid) throws IOException, JSONException, KException {
+        return areFriends(Arrays.<Long>asList(new Long[]{uid})).get(uid);
+    }
+
     //http://vkontakte.ru/developers.php?oid=-1&p=friends.add
     public long addFriend(Long uid, String text, String captcha_key, String captcha_sid) throws MalformedURLException, IOException, JSONException, KException{
         Params params = new Params("friends.add");
